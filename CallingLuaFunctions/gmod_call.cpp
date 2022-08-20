@@ -14,31 +14,6 @@ ILuaBase* g_LUA;
 
 
 
-LUA_FUNCTION(Sum) { // Creating function "Sum"
-
-	double a = LUA->CheckNumber(1); // Checking is that the first argument is a number
-	double b = LUA->CheckNumber(2); // Checking is that the second argument is a number
-
-
-	LUA->PushNumber(a + b); // Pushing sum to stack
-
-	return 1; // Returning 1 value from the stack to Lua
-
-}
-
-LUA_FUNCTION(Echo) { // Creating function "Echo"
-
-	std::string a = LUA->CheckString(1); // Checking is that the first argument is a string
-	a = "C++ Echo: " + a; // Adding "C++ Echo: " to beginning of the string
-
-
-	LUA->PushString( a.c_str() ); // Converting to const char* and pushing to stack
-
-	return 1; // Returning 1 value from the stack to Lua
-
-}
-
-
 GMOD_MODULE_OPEN() { // Called when module required 
 	g_LUA = LUA; // Creating global reference
 
