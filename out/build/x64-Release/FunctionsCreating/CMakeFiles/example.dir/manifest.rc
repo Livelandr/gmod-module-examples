@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+2 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/FunctionsCreating/CMakeFiles/example.dir/embed.manifest"
