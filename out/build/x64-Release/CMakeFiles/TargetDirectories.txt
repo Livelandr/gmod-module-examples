@@ -2,6 +2,6 @@ C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/CMakeF
 C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/CMakeFiles/rebuild_cache.dir
 C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/include/CMakeFiles/edit_cache.dir
 C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/include/CMakeFiles/rebuild_cache.dir
-C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/FunctionsCreating/CMakeFiles/example.dir
-C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/FunctionsCreating/CMakeFiles/edit_cache.dir
-C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/FunctionsCreating/CMakeFiles/rebuild_cache.dir
+C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/CallingCustomHook/CMakeFiles/example.dir
+C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/CallingCustomHook/CMakeFiles/edit_cache.dir
+C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/CallingCustomHook/CMakeFiles/rebuild_cache.dir

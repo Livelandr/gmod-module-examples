@@ -35,7 +35,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/include/cmake_install.cmake")
-  include("C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/FunctionsCreating/cmake_install.cmake")
+  include("C:/Users/Livelandr/source/repos/gmod_example_module/out/build/x64-Release/CallingCustomHook/cmake_install.cmake")
 
 endif()
 

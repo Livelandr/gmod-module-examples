@@ -1,15 +1,12 @@
 # ninja log v5
 0	565	6826921676597928	FunctionsExample/CMakeFiles/gmod_function_module.dir/gmod_functions.cpp.obj	fe7e8a21749fb6cd
+821	1340	6827221713765689	TableCreation/example.lib	f8bbb456d5df82a2
 0	620	6826924362488418	FunctionsExample/gmod_function_module.lib	d9d1f81041a211dc
 1	609	6826946597333134	FunctionsExample/CMakeFiles/example.dir/gmod_functions.cpp.obj	f32636185e52af47
 609	1058	6826946597333134	FunctionsExample/example.lib	a80e755919ee9782
-609	1058	6826946597333134	builded/gmsv_example_win64.dll	a80e755919ee9782
-1	587	6826946922180451	FunctionsCreating/CMakeFiles/example.dir/gmod_functions.cpp.obj	891f5aa6bdda82b9
-588	1171	6826946924922146	builded/gmsv_example_win64.dll	523a0471c0070618
-588	1171	6826946924922146	FunctionsCreating/example.lib	523a0471c0070618
-0	399	6826947687545160	FunctionsCreating/CMakeFiles/example.dir/gmod_functions.cpp.obj	891f5aa6bdda82b9
-399	760	6826947687545160	builded/gmsv_example_win64.dll	523a0471c0070618
-399	760	6826947687545160	FunctionsCreating/example.lib	523a0471c0070618
-1	610	6826948337039603	FunctionsCreating/CMakeFiles/example.dir/gmod_functions.cpp.obj	891f5aa6bdda82b9
-611	1040	6826948337039603	builded/gmsv_example_win64.dll	523a0471c0070618
-611	1040	6826948337039603	FunctionsCreating/example.lib	523a0471c0070618
+550	995	6827270727933600	builded/gmsv_example_win64.dll	f969a53086adb585
+421	840	6827248834494039	CallingLuaFunctions/example.lib	4fb256b14d4f0a2d
+1	821	6827221711440756	TableCreation/CMakeFiles/example.dir/gmod_tables.cpp.obj	fedcf04ee506ea73
+1	421	6827248834494039	CallingLuaFunctions/CMakeFiles/example.dir/gmod_call.cpp.obj	7321b896f9cb81ad
+1	550	6827270727933600	CallingCustomHook/CMakeFiles/example.dir/gmod_hook.cpp.obj	99f7802d0e673ca8
+550	995	6827270727933600	CallingCustomHook/example.lib	f969a53086adb585
