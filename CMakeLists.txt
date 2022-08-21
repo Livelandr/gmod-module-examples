@@ -15,10 +15,10 @@ add_subdirectory("include") # Including GMod files
 
 # Choose ONLY ONE example 
 
-# add_subdirectory("FunctionsCreation")
-# add_subdirectory("TableCreation")
+ add_subdirectory("FunctionsCreation")
 # add_subdirectory("CallingLuaFunctions")
-add_subdirectory("CallingCustomHook")
-
+# add_subdirectory("TableCreation")
+# add_subdirectory("CallingCustomHook")
+# add_subdirectory("Userdata")
 
 set_gmod_suffix_prefix(${MODULE_NAME}) # Setting module name
