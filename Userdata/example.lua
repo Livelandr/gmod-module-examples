@@ -1,7 +1,7 @@
 require("example") -- Require our module
 
 
-local newHuman = Human.New("Livelandr", 15) -- Creating human
+local newHuman = Human.New("Livelandr", 16) -- Creating human
 
 print( Format("Hello, my name is %s and i'm %i years old!", Human.GetName(newHuman), Human.GetAge(newHuman)) )
 
