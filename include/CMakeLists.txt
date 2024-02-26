@@ -1,10 +1,5 @@
-set(SOURCES
-    GarrysMod/Lua/Interface.h
-    GarrysMod/Lua/LuaBase.h
-    GarrysMod/Lua/SourceCompat.h
-    GarrysMod/Lua/Types.h
-    GarrysMod/Lua/UserData.h
-) # Including GMod files
+file(GLOB SOURCES GarrysMod/Lua/*.h)
+# Including GMod files
 
 add_library(example_module INTERFACE)
 target_include_directories(example_module INTERFACE ./)

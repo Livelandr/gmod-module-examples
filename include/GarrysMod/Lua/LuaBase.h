@@ -1,7 +1,8 @@
 #ifndef GARRYSMOD_LUA_LUABASE_H
 #define GARRYSMOD_LUA_LUABASE_H
 
-#include <stddef.h>
+#include <cstdarg>
+#include <cstdlib>
 #include <type_traits>
 
 #include "Types.h"
@@ -9,12 +10,43 @@
 #include "SourceCompat.h"
 
 struct lua_State;
+struct lua_Debug;
 
 namespace GarrysMod
 {
     namespace Lua
     {
+        extern "C"
+        {
+            void lua_getfenv( lua_State *L, int idx );
+            int lua_setfenv( lua_State *L, int idx );
+            const char *lua_pushvfstring( lua_State *L, const char *fmt, va_list argp );
+            int lua_error( lua_State *L );
+            int luaL_typerror( lua_State *L, int narg, const char *tname );
+            const void *lua_topointer( lua_State *L, int idx );
+            int luaL_callmeta( lua_State *L, int idx, const char *e );
+            int lua_getstack( lua_State *L, int level, lua_Debug *ar );
+            int lua_getinfo( lua_State *L, const char *what, lua_Debug *ar );
+        }
+
         typedef int ( *CFunc )( lua_State* L );
+
+        // For use with ILuaBase::PushSpecial
+        enum
+        {
+            SPECIAL_GLOB,       // Global table
+            SPECIAL_ENV,        // Environment table
+            SPECIAL_REG,        // Registry table
+        };
+
+        // Use these when calling ILuaBase::GetField or ILuaBase::SetField for example,
+        // instead of pushing the specified table
+        enum
+        {
+            INDEX_GLOBAL = -10002,  // Global table
+            INDEX_ENVIRONMENT,      // Environment table
+            INDEX_REGISTRY,         // Registry table
+        };
 
         //
         // Use this to communicate between C and Lua
@@ -119,6 +151,7 @@ namespace GarrysMod
         public:
             // Throws an error and ceases execution of the function
             // If this function is called, any local C values will not have their destructors called!
+            [[noreturn]]
             virtual void        ThrowError( const char* strError ) = 0;
 
             // Checks that the type of the value at iStackPos is iType
@@ -128,6 +161,7 @@ namespace GarrysMod
 
             // Throws a pretty error message about the given argument
             // If this function is called, any local C values will not have their destructors called!
+            [[noreturn]]
             virtual void        ArgError( int iArgNum, const char* strMessage ) = 0;
 
             // Pushes table[key] on to the stack
@@ -146,7 +180,7 @@ namespace GarrysMod
             // Returns the string at iStackPos. iOutLen is set to the length of the string if it is not NULL
             // If the value at iStackPos is a number, it will be converted in to a string
             // Returns NULL upon failure
-            virtual const char* GetString( int iStackPos = -1, unsigned int* iOutLen = NULL ) = 0;
+            virtual const char* GetString( int iStackPos = -1, unsigned int* iOutLen = nullptr ) = 0;
 
             // Returns the number at iStackPos
             // Returns 0 upon failure
@@ -160,7 +194,7 @@ namespace GarrysMod
             // returns NULL upon failure
             virtual CFunc       GetCFunction( int iStackPos = -1 ) = 0;
 
-#ifndef GMOD_ALLOW_DEPRECATED
+#if !defined( GMOD_ALLOW_DEPRECATED ) && !defined( GMOD_ALLOW_LIGHTUSERDATA )
         protected:
 #endif
                 // Deprecated: You should probably be using the UserType functions instead of this
@@ -188,7 +222,7 @@ namespace GarrysMod
             virtual void        PushCClosure( CFunc val, int iVars ) = 0;
 
 
-#ifndef GMOD_ALLOW_DEPRECATED
+#if !defined( GMOD_ALLOW_DEPRECATED ) && !defined( GMOD_ALLOW_LIGHTUSERDATA )
         protected:
 #endif
                 // Deprecated: Don't use light userdata in GMod
@@ -276,6 +310,23 @@ namespace GarrysMod
                 return static_cast<T*>( ud->data );
             }
 
+            // Creates a new UserData of type iType with an instance of T
+            // If your class is complex/has complex members which handle memory,
+            // you might need a __gc method to clean these, as Lua won't handle them
+            template <typename T>
+            T* NewUserType( int iType )
+            {
+                UserData* ud = static_cast<UserData*>( NewUserdata( sizeof( UserData ) + sizeof( T ) ) );
+                if( ud == nullptr )
+                    return nullptr;
+
+                T* data = reinterpret_cast<T*>( reinterpret_cast<unsigned char *>( ud ) + sizeof( UserData ) );
+                ud->data = new( data ) T;
+                ud->type = static_cast<unsigned char>( iType );
+
+                return data;
+            }
+
             // Creates a new UserData with your own data embedded within it
             template <class T>
             void PushUserType_Value( const T& val, int iType )
@@ -298,14 +349,104 @@ namespace GarrysMod
                 // Set the metatable
                 if ( PushMetaTable( iType ) ) SetMetaTable( -2 );
             }
-        };
 
-        // For use with ILuaBase::PushSpecial
-        enum
-        {
-            SPECIAL_GLOB,       // Global table
-            SPECIAL_ENV,        // Environment table
-            SPECIAL_REG,        // Registry table
+            // Gets the internal lua_State
+            inline lua_State *GetState( ) const
+            {
+                return state;
+            }
+
+            // Gets the environment table of the value at the given index
+            inline void GetFEnv( int iStackPos )
+            {
+                lua_getfenv( state, iStackPos );
+            }
+
+            // Sets the environment table of the value at the given index
+            inline int SetFEnv( int iStackPos )
+            {
+                return lua_setfenv( state, iStackPos );
+            }
+
+            // Pushes a formatted string onto the stack
+            inline const char* PushFormattedString( const char* fmt, va_list args )
+            {
+                return lua_pushvfstring( state, fmt, args );
+            }
+
+            // Pushes a formatted string onto the stack
+            inline const char* PushFormattedString( const char* fmt, ... )
+            {
+                va_list args;
+                va_start( args, fmt );
+                const char* res = PushFormattedString( fmt, args );
+                va_end( args );
+                return res;
+            }
+
+            // Throws an error (uses the value at the top of the stack)
+            [[noreturn]]
+            inline void Error( )
+            {
+                lua_error( state );
+
+                // Should never be reached since 'lua_error' never returns.
+                std::abort( );
+            }
+
+            // Throws an error (pushes a formatted string onto the stack and uses it)
+            [[noreturn]]
+            inline void FormattedError( const char* fmt, ... )
+            {
+                va_list args;
+                va_start( args, fmt );
+                PushFormattedString( fmt, args );
+                va_end( args );
+                Error( );
+            }
+
+            // Throws an error related to type differences
+            [[noreturn]]
+            inline void TypeError( int iStackPos, const char* tname )
+            {
+                luaL_typerror( state, iStackPos, tname );
+
+                // Should never be reached since 'luaL_typerror' never returns.
+                std::abort( );
+            }
+
+            // Converts the value at the given index to a generic C pointer (void*)
+            inline const void* GetPointer( int iStackPos )
+            {
+                return lua_topointer( state, iStackPos );
+            }
+
+            // Calls a metamethod on the object at iStackPos
+            inline int CallMeta( int iStackPos, const char* e )
+            {
+                return luaL_callmeta( state, iStackPos, e );
+            }
+
+            // Produces the pseudo-index of an upvalue at iPos
+            static inline int GetUpvalueIndex( int iPos )
+            {
+                return static_cast<int>( INDEX_GLOBAL ) - iPos;
+            }
+
+            // Get information about the interpreter runtime stack
+            inline int GetStack( int level, lua_Debug *ar )
+            {
+                return lua_getstack( state, level, ar );
+            }
+
+            // Returns information about a specific function or function invocation
+            inline int GetInfo( const char *what, lua_Debug *ar )
+            {
+                return lua_getinfo( state, what, ar );
+            }
+
+        private:
+            lua_State *state;
         };
     }
 }

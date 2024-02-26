@@ -2,7 +2,7 @@
 #define GARRYSMOD_LUA_SOURCECOMPAT_H
 
 #ifdef GMOD_USE_SOURCESDK
-#include "mathlib/vector.h"
+#include <mathlib/vector.h>
 #else
     struct Vector
     {
